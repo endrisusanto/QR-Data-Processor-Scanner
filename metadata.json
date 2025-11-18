@@ -1,0 +1,7 @@
+{
+  "name": "QR Data Processor & Scanner",
+  "description": "An application to process pasted data from spreadsheets, generate QR codes for each entry, and scan them using the device's camera. Features a glassmorphism UI, data table with search, and a QR code slideshow.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

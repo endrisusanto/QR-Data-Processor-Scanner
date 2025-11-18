@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR Data Processor & Scanner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url('https://rsms.me/inter/inter.css');
+      html { font-family: 'Inter', sans-serif; }
+      
+      body {
+        /* Dark background for the canvas animation */
+        background-color: #0c0a18;
+        color: white;
+        margin: 0;
+        overflow-x: hidden;
+      }
+
+      #neural-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1; /* Position canvas behind all content */
+      }
+
+      /* Hide scrollbar for cleaner look */
+      ::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.5);
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "html5-qrcode": "https://aistudiocdn.com/html5-qrcode@^2.3.8",
+    "qrcode.react": "https://aistudiocdn.com/qrcode.react@^4.2.0"
+  }
+}
+</script>
+</head>
+  <body>
+    <canvas id="neural-background"></canvas>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+    <script>
+      const canvas = document.getElementById('neural-background');
+      const ctx = canvas.getContext('2d');
+
+      let particles = [];
+      const mouse = { x: null, y: null };
+
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      
+      window.addEventListener('resize', () => {
+        resizeCanvas();
+        init();
+      });
+      resizeCanvas();
+
+      window.addEventListener('mousemove', (event) => {
+        mouse.x = event.x;
+        mouse.y = event.y;
+      });
+
+      window.addEventListener('mouseout', () => {
+        mouse.x = null;
+        mouse.y = null;
+      });
+
+      class Particle {
+        constructor(x, y, dirX, dirY, size, color) {
+          this.x = x;
+          this.y = y;
+          this.dirX = dirX;
+          this.dirY = dirY;
+          this.size = size;
+          this.color = color;
+        }
+
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+          ctx.fillStyle = this.color;
+          ctx.fill();
+        }
+
+        update() {
+          if (this.x > canvas.width || this.x < 0) {
+            this.dirX = -this.dirX;
+          }
+          if (this.y > canvas.height || this.y < 0) {
+            this.dirY = -this.dirY;
+          }
+
+          this.x += this.dirX;
+          this.y += this.dirY;
+          this.draw();
+        }
+      }
+
+      function init() {
+        particles = [];
+        const numberOfParticles = (canvas.height * canvas.width) / 12000;
+        for (let i = 0; i < numberOfParticles; i++) {
+          const size = Math.random() * 2 + 1;
+          const x = Math.random() * (innerWidth - size * 2) + size;
+          const y = Math.random() * (innerHeight - size * 2) + size;
+          const dirX = (Math.random() - 0.5) * 0.5;
+          const dirY = (Math.random() - 0.5) * 0.5;
+          const color = 'rgba(0, 255, 255, 0.8)';
+          particles.push(new Particle(x, y, dirX, dirY, size, color));
+        }
+      }
+
+      function connect() {
+        const connectDistance = 130;
+        const connectDistanceSq = connectDistance * connectDistance;
+
+        for (let a = 0; a < particles.length; a++) {
+          for (let b = a + 1; b < particles.length; b++) {
+            const dx = particles[a].x - particles[b].x;
+            const dy = particles[a].y - particles[b].y;
+            const distanceSq = dx * dx + dy * dy;
+            
+            if (distanceSq < connectDistanceSq) {
+              const opacity = 1 - (distanceSq / connectDistanceSq);
+              ctx.strokeStyle = `rgba(0, 255, 255, ${opacity})`;
+              ctx.lineWidth = 1;
+              ctx.beginPath();
+              ctx.moveTo(particles[a].x, particles[a].y);
+              ctx.lineTo(particles[b].x, particles[b].y);
+              ctx.stroke();
+            }
+          }
+        }
+        
+        // Connect particles to mouse
+        if (mouse.x !== null && mouse.y !== null) {
+            const mouseConnectDistance = 250;
+            const mouseConnectDistanceSq = mouseConnectDistance * mouseConnectDistance;
+            for(let i = 0; i < particles.length; i++) {
+                const dx = particles[i].x - mouse.x;
+                const dy = particles[i].y - mouse.y;
+                const distanceSq = dx * dx + dy * dy;
+                if(distanceSq < mouseConnectDistanceSq) {
+                    const opacity = 1 - (distanceSq / mouseConnectDistanceSq);
+                    ctx.strokeStyle = `rgba(0, 255, 255, ${opacity * 0.3})`;
+                    ctx.beginPath();
+                    ctx.moveTo(mouse.x, mouse.y);
+                    ctx.lineTo(particles[i].x, particles[i].y);
+                    ctx.stroke();
+                }
+            }
+        }
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        ctx.clearRect(0, 0, innerWidth, innerHeight);
+
+        for (let i = 0; i < particles.length; i++) {
+          particles[i].update();
+        }
+        connect();
+      }
+
+      init();
+      animate();
+    </script>
+  </body>
+</html>
