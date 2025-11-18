@@ -19,13 +19,17 @@ const RegisterPage: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!username || !password || !confirmPassword) {
+      addAlert('Invalid Input', 'Please fill all fields.', 'error');
+      return;
+    }
+    if (password.length < 6) {
+      addAlert('Invalid Password', 'Password must be at least 6 characters long.', 'error');
+      return;
+    }
     if (password !== confirmPassword) {
       addAlert('Password Mismatch', 'Passwords do not match.', 'error');
       return;
-    }
-    if (!username || !password) {
-        addAlert('Invalid Input', 'Please fill all fields.', 'error');
-        return;
     }
     try {
       await register(username, password);

@@ -1,3 +1,4 @@
+
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
@@ -7,8 +8,9 @@ export interface AuthRequest extends Request {
 
 const auth = (req: AuthRequest, res: Response, next: NextFunction) => {
   // Get token from header
-  // FIX: Use req.get() which is an alternative way to access headers and should be available on the Request type.
-  const token = req.get('x-auth-token');
+  // FIX: Use req.headers to access the token as the req.header() method was not found on the AuthRequest type. This also safely handles cases where the header might be an array.
+  const tokenHeader = req.headers['x-auth-token'];
+  const token = Array.isArray(tokenHeader) ? tokenHeader[0] : tokenHeader;
 
   // Check if not token
   if (!token) {

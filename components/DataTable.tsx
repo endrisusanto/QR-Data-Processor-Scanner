@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { ItemData } from '../types';
@@ -28,11 +29,11 @@ export const DataTable: React.FC<DataTableProps> = ({ items, filter, onManualChe
         )
       : statusFiltered;
 
-    // FIX: Explicitly type the accumulator for the reduce function to ensure `groupedItems` is correctly typed.
-    return searchFiltered.reduce<Record<string, ItemData[]>>((acc, item) => {
+    // FIX: Explicitly type the initial value of the reduce function to ensure that `groupedItems` is correctly typed.
+    return searchFiltered.reduce((acc, item) => {
       (acc[item.model] = acc[item.model] || []).push(item);
       return acc;
-    }, {});
+    }, {} as Record<string, ItemData[]>);
 
   }, [items, searchTerm, filter]);
 
