@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR Data Processor & Scanner</title>
+    <style>
+      @import url('https://rsms.me/inter/inter.css');
+      html { font-family: 'Inter', sans-serif; }
+      
+      body {
+        background-color: #0c0a18;
+        color: white;
+        margin: 0;
+        overflow-x: hidden;
+      }
+
+      #neural-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+      }
+
+      ::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.5);
+      }
+
+      @media print {
+        body {
+          background-color: #ffffff !important;
+          color: #000000 !important;
+          font-size: 10pt;
+        }
+
+        .no-print, #neural-background, #root > div > header, #root > div > main > div:first-child {
+          display: none !important;
+        }
+        .printable-area {
+          display: block !important;
+          box-shadow: none !important;
+          border: none !important;
+          background: transparent !important;
+          backdrop-filter: none !important;
+        }
+        main { padding: 0 !important; }
+        table { width: 100%; border-collapse: collapse !important; color: #000 !important; }
+        th, td { border: 1px solid #ddd !important; padding: 8px !important; color: #000 !important; }
+        thead { background-color: #f2f2f2 !important; }
+        .printable-row { display: table-row !important; }
+        .qr-print-container svg { width: 50px !important; height: 50px !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="neural-background"></canvas>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // This script will be loaded after the module script, so it can run.
+      // We will re-initialize it when the React component mounts for better lifecycle management.
+      let animationFrameId;
+      function startNeuralAnimation() {
+        const canvas = document.getElementById('neural-background');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        let particles = [];
+        const mouse = { x: null, y: null };
+
+        function resizeCanvas() {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+        }
+        
+        window.addEventListener('resize', () => {
+          resizeCanvas();
+          init();
+        });
+        resizeCanvas();
+
+        window.addEventListener('mousemove', (event) => { mouse.x = event.x; mouse.y = event.y; });
+        window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
+
+        class Particle {
+          constructor(x, y, dirX, dirY, size, color) {
+            this.x = x; this.y = y; this.dirX = dirX; this.dirY = dirY; this.size = size; this.color = color;
+          }
+          draw() {
+            ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false); ctx.fillStyle = this.color; ctx.fill();
+          }
+          update() {
+            if (this.x > canvas.width || this.x < 0) this.dirX = -this.dirX;
+            if (this.y > canvas.height || this.y < 0) this.dirY = -this.dirY;
+            this.x += this.dirX; this.y += this.dirY; this.draw();
+          }
+        }
+
+        function init() {
+          particles = [];
+          const numberOfParticles = (canvas.height * canvas.width) / 12000;
+          for (let i = 0; i < numberOfParticles; i++) {
+            const size = Math.random() * 2 + 1;
+            const x = Math.random() * (innerWidth - size * 2) + size;
+            const y = Math.random() * (innerHeight - size * 2) + size;
+            const dirX = (Math.random() - 0.5) * 0.5;
+            const dirY = (Math.random() - 0.5) * 0.5;
+            particles.push(new Particle(x, y, dirX, dirY, size, 'rgba(0, 255, 255, 0.8)'));
+          }
+        }
+
+        function connect() {
+          const connectDistanceSq = 130 * 130;
+          for (let a = 0; a < particles.length; a++) {
+            for (let b = a + 1; b < particles.length; b++) {
+              const distanceSq = (particles[a].x - particles[b].x) ** 2 + (particles[a].y - particles[b].y) ** 2;
+              if (distanceSq < connectDistanceSq) {
+                ctx.strokeStyle = `rgba(0, 255, 255, ${1 - (distanceSq / connectDistanceSq)})`;
+                ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(particles[a].x, particles[a].y); ctx.lineTo(particles[b].x, particles[b].y); ctx.stroke();
+              }
+            }
+          }
+        }
+
+        function animate() {
+          animationFrameId = requestAnimationFrame(animate);
+          ctx.clearRect(0, 0, innerWidth, innerHeight);
+          for (let i = 0; i < particles.length; i++) particles[i].update();
+          connect();
+        }
+
+        init();
+        animate();
+      }
+
+      startNeuralAnimation(); // Start on initial load
+
+      // Function to stop the animation if needed (e.g., on component unmount)
+      function stopNeuralAnimation() {
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
+        }
+      }
+    </script>
+  </body>
+</html>

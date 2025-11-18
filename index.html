@@ -42,6 +42,60 @@
       ::-webkit-scrollbar-thumb:hover {
           background: rgba(255, 255, 255, 0.5);
       }
+
+      /* ================================= */
+      /* STYLES FOR PRINTING */
+      /* ================================= */
+      @media print {
+        body {
+          background-color: #ffffff !important;
+          color: #000000 !important;
+          font-size: 10pt;
+        }
+
+        .no-print, #neural-background, #root > div > header, #root > div > main > div:first-child {
+          display: none !important;
+        }
+
+        .printable-area {
+          display: block !important;
+          box-shadow: none !important;
+          border: none !important;
+          background: transparent !important;
+          backdrop-filter: none !important;
+        }
+
+        main {
+          padding: 0 !important;
+        }
+
+        table {
+          width: 100%;
+          border-collapse: collapse !important;
+          color: #000 !important;
+        }
+
+        th, td {
+          border: 1px solid #ddd !important;
+          padding: 8px !important;
+          color: #000 !important;
+        }
+        
+        thead {
+          background-color: #f2f2f2 !important;
+        }
+
+        /* Force all accordion rows to be visible */
+        .printable-row {
+          display: table-row !important;
+        }
+
+        .qr-print-container svg {
+            width: 50px !important;
+            height: 50px !important;
+        }
+      }
+
     </style>
   <script type="importmap">
 {
@@ -50,7 +104,18 @@
     "react": "https://aistudiocdn.com/react@^19.2.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
     "html5-qrcode": "https://aistudiocdn.com/html5-qrcode@^2.3.8",
-    "qrcode.react": "https://aistudiocdn.com/qrcode.react@^4.2.0"
+    "qrcode.react": "https://aistudiocdn.com/qrcode.react@^4.2.0",
+    "cors": "https://aistudiocdn.com/cors@^2.8.5",
+    "express": "https://aistudiocdn.com/express@^5.1.0",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
+    "vite": "https://aistudiocdn.com/vite@^7.2.2",
+    "dotenv": "https://aistudiocdn.com/dotenv@^17.2.3",
+    "jsonwebtoken": "https://aistudiocdn.com/jsonwebtoken@^9.0.2",
+    "express-validator": "https://aistudiocdn.com/express-validator@^7.3.0",
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.6",
+    "axios": "https://aistudiocdn.com/axios@^1.13.2",
+    "bcryptjs": "https://aistudiocdn.com/bcryptjs@^3.0.3",
+    "mongoose": "https://aistudiocdn.com/mongoose@^8.20.0"
   }
 }
 </script>

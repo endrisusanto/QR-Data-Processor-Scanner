@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "8008:80"
+    depends_on:
+      - backend
+    restart: always
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      - MONGO_URI=mongodb://db:27017/qr-app
+      - JWT_SECRET=a-very-secret-and-strong-jwt-secret-key
+    depends_on:
+      - db
+    restart: always
+    # Ports are not exposed to host, as frontend proxies requests
+
+  db:
+    image: mongo:latest
+    volumes:
+      - mongo-data:/data/db
+    restart: always
+
+volumes:
+  mongo-data:

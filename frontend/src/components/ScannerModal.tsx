@@ -26,18 +26,25 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose, onS
           aspectRatio: 1.0,
       };
 
-      const startScanner = () => {
-        scanner.start(
-          { facingMode: "environment" },
-          config,
-          (decodedText) => {
-            onScanSuccess(decodedText);
-          },
-          undefined // Optional error callback
-        ).catch(err => console.error("Scanner start error", err));
-      };
-      
-      startScanner();
+      scanner.start(
+        { facingMode: "environment" },
+        config,
+        (decodedText) => {
+          onScanSuccess(decodedText);
+        },
+        undefined
+      ).catch(err => {
+        console.error("Scanner start error", err);
+        // Fallback for cameras that don't support environment facing mode
+        if (err.name === "NotAllowedError" || err.name === "NotFoundError") {
+            scanner.start(
+                undefined, // Use default camera
+                config,
+                onScanSuccess,
+                undefined
+            ).catch(err2 => console.error("Fallback scanner start error", err2));
+        }
+      });
     }
 
     return () => {

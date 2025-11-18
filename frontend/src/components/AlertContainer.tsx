@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { AlertData, AlertType } from '../types';
 import { Icons } from './Icons';

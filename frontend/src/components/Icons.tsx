@@ -23,7 +23,7 @@ export const Icons = {
   Pause: () => <svg {...iconProps} className="w-8 h-8"><path d="M10 9v6m4-6v6"></path></svg>,
   ChevronLeft: () => <svg {...iconProps} className="w-6 h-6 text-white/80"><path d="M15 19l-7-7 7-7"></path></svg>,
   ChevronRight: ({ className = 'w-6 h-6 text-white/80' }: { className?: string }) => <svg {...iconProps} className={className}><path d="M9 5l7 7-7 7"></path></svg>,
-  ChevronDown: () => <svg {...iconProps} className="w-6 h-6 text-white/80"><path d="M19 9l-7 7-7 7"></path></svg>,
+  ChevronDown: () => <svg {...iconProps} className="w-6 h-6 text-white/80"><path d="M19 9l-7 7-7-7"></path></svg>,
   CheckCircle: () => <svg {...iconProps}><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>,
   ExclamationCircle: () => <svg {...iconProps}><path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>,
   InfoCircle: () => <svg {...iconProps}><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>,
