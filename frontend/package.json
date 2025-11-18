@@ -1,11 +1,11 @@
 {
-  "name": "qr-app-frontend",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
+  "name": "qr-app-backend",
+  "version": "1.0.0",
+  "description": "Backend for the QR Data Processor App",
+  "main": "dist/index.js",
+"scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "npx vite build",
     "preview": "vite preview"
   },
   "dependencies": {

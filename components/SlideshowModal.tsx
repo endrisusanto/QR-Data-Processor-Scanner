@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { ItemData } from '../types';
@@ -27,6 +26,8 @@ export const SlideshowModal: React.FC<SlideshowModalProps> = ({ isOpen, onClose,
   };
 
   const startSlideshow = useCallback(() => {
+    // Pastikan interval sebelumnya dibersihkan saat memulai yang baru
+    if (intervalRef.current) clearInterval(intervalRef.current); 
     intervalRef.current = setInterval(nextQr, delay * 1000);
   }, [nextQr, delay]);
 
@@ -38,13 +39,14 @@ export const SlideshowModal: React.FC<SlideshowModalProps> = ({ isOpen, onClose,
   };
 
   useEffect(() => {
-    if (isOpen && isPlaying) {
+    if (isOpen && isPlaying && items.length > 0) {
       startSlideshow();
     } else {
       stopSlideshow();
     }
-    return stopSlideshow;
-  }, [isOpen, isPlaying, startSlideshow]);
+    // Cleanup function: hentikan slideshow saat komponen di-unmount atau dependensi berubah
+    return stopSlideshow; 
+  }, [isOpen, isPlaying, startSlideshow, items.length]);
 
   const handlePlayPause = () => {
     setIsPlaying(prev => !prev);
@@ -53,13 +55,25 @@ export const SlideshowModal: React.FC<SlideshowModalProps> = ({ isOpen, onClose,
   const handleDelayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDelay(Number(e.target.value));
   };
+  
+  // Karena startSlideshow bergantung pada `delay`, kita perlu memanggilnya ulang saat delay berubah
+  // tetapi hanya jika slideshow sedang diputar
+  useEffect(() => {
+    if (isPlaying && isOpen) {
+        // Stop current slideshow interval and start a new one with the new delay
+        stopSlideshow();
+        startSlideshow(); 
+    }
+  }, [delay, isPlaying, isOpen]);
+
 
   const currentItem = items[currentIndex];
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
+    // PERUBAHAN: Hapus onClick={onClose} dari elemen backdrop ini
+    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
       <GlassCard className="w-full max-w-xl" onClick={e => e.stopPropagation()}>
         <div className="p-6">
           <div className="flex justify-between items-center border-b border-white/20 pb-3 mb-4">
