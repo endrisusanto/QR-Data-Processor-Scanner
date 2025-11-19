@@ -19,6 +19,7 @@ export const Icons = {
   Search: () => <svg {...iconProps} className="w-5 h-5 text-white/50"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>,
   Upload: () => <svg {...iconProps}><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"></path></svg>,
   Print: () => <svg {...iconProps}><path d="M17 17h2a2 2 0 002-2v-5a2 2 0 00-2-2H5a2 2 0 00-2 2v5a2 2 0 002 2h2m4 0v3a1 1 0 001 1h2a1 1 0 001-1v-3m-6 0h6"></path></svg>,
+  Download: () => <svg {...iconProps}><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>,
   Close: ({ className = 'w-6 h-6' }: { className?: string }) => <svg {...iconProps} className={className}><path d="M6 18L18 6M6 6l12 12"></path></svg>,
   Pause: () => <svg {...iconProps} className="w-8 h-8"><path d="M10 9v6m4-6v6"></path></svg>,
   ChevronLeft: () => <svg {...iconProps} className="w-6 h-6 text-white/80"><path d="M15 19l-7-7 7-7"></path></svg>,

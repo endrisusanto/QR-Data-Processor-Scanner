@@ -56,7 +56,7 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose, onS
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
       <GlassCard className="w-full max-w-2xl" onClick={e => e.stopPropagation()}>
         <div className="p-6">
           <div className="flex justify-between items-center border-b border-white/20 pb-3 mb-4">

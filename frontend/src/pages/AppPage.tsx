@@ -134,14 +134,22 @@ const AppPage: React.FC = () => {
   }, [items, addAlert, updateItems]);
   
   const handleManualCheck = (item: ItemData) => {
-    if (!item.scanned) {
-        setConfirmModalState({ isOpen: true, item: item });
-    }
+    setConfirmModalState({ isOpen: true, item: item });
   };
 
   const handleConfirmManualCheck = () => {
     if (confirmModalState.item) {
-        handleScanSuccess(confirmModalState.item.serial);
+const itemToToggle = confirmModalState.item;
+       const updatedItems = items.map(item => {
+        if (item.serial === itemToToggle.serial) {
+            const newScannedState = !item.scanned;
+            const action = newScannedState ? 'scanned' : 'unscanned';
+            addAlert('Audit Confirmed', `Serial ${item.serial} marked as ${action}.`, 'success');
+            return { ...item, scanned: newScannedState };
+          }
+          return item;
+        });
+       updateItems(updatedItems);
     }
     setConfirmModalState({ isOpen: false, item: null });
   };
@@ -151,6 +159,33 @@ const AppPage: React.FC = () => {
       setItems([]);
       saveData([], '');
       addAlert('Data Cleared', 'Input and table data have been cleared.', 'info');
+  };
+
+  // Fungsi untuk ekspor data ke CSV
+  const handleExport = () => {
+    if (items.length === 0) {
+      addAlert('Export Failed', 'No data to export.', 'error');
+      return;
+    }
+
+    // Buat header CSV
+    const headers = ["Model Name", "Serial", "Scanned Status"];
+    
+    // Konversi item data ke baris CSV
+    const csvRows = items.map(item => [
+      `"${item.model}"`,
+      `"${item.serial}"`,
+      item.scanned ? "SCANNED" : "NOT SCANNED"
+    ].join(','));
+    
+    const csvContent = [headers.join(','), ...csvRows].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `qr_data_export_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.click();
+    addAlert('Export Successful', `Exported ${items.length} items to CSV.`, 'success');
   };
 
   const scannedCount = items.filter(item => item.scanned).length;
@@ -223,6 +258,9 @@ const AppPage: React.FC = () => {
                   </button>
                    <button onClick={() => window.print()} className="bg-green-500/80 hover:bg-green-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md flex items-center gap-2">
                     <Icons.Print />Print A4
+                  </button>
+                  <button onClick={handleExport} className="bg-blue-500/80 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md flex items-center gap-2">
+                    <Icons.Download />Export CSV
                   </button>
                 </div>
               </div>

@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>QR Data Processor & Scanner</title>
+    <meta property="og:title" content="QR Data Processor & Scanner" />
+    <meta property="og:description" content="Audit scan yang efisien." />
+    <meta property="og:image" content="https://cdn.prod.website-files.com/60edc0a8835d5b38bf11f03f/61cf059962c1681bde6fa9a7_Use-Cases-of-QR-Code-Technology.jpeg" />
+    <meta property="og:url" content="https://audit.endrisusanto.my.id" />
+    <meta property="og:type" content="website" />
     <style>
       @import url('https://rsms.me/inter/inter.css');
       html { font-family: 'Inter', sans-serif; }
@@ -61,8 +66,19 @@
         table { width: 100%; border-collapse: collapse !important; color: #000 !important; }
         th, td { border: 1px solid #ddd !important; padding: 8px !important; color: #000 !important; }
         thead { background-color: #f2f2f2 !important; }
-        .printable-row { display: table-row !important; }
-        .qr-print-container svg { width: 50px !important; height: 50px !important; }
+        /* Pastikan header tabel diulang dan tabel dapat dibagi */
+        thead { display: table-header-group; }
+        tr, td, th {
+          page-break-inside: avoid;
+        }
+        table { page-break-after: auto; }
+        .printable-row { display: table-row !important; visibility: visible !important; }
+        .qr-print-container svg { width: 48px !important; height: 48px !important; }
+        /* Hapus batasan tinggi pada container tabel untuk memungkinkan pemisahan halaman */
+        .printable-area .overflow-x-auto {
+          max-height: none !important;
+          overflow: visible !important;
+        }
       }
     </style>
   </head>

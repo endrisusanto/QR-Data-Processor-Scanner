@@ -115,8 +115,7 @@ export const DataTable: React.FC<DataTableProps> = ({ items, filter, onManualChe
                           type="checkbox"
                           checked={item.scanned}
                           onChange={() => onManualCheck(item)}
-                          className="w-5 h-5 rounded bg-white/20 border-white/30 text-cyan-500 focus:ring-cyan-500 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
-                          disabled={item.scanned}
+                          className="w-5 h-5 rounded bg-white/20 border-white/30 text-cyan-500 focus:ring-cyan-500 cursor-pointer"
                         />
                       </td>
                     </tr>
