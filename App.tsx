@@ -8,6 +8,7 @@ import { AlertContainer } from './components/AlertContainer';
 import { Accordion } from './components/Accordion';
 import { ConfirmationModal } from './components/ConfirmationModal';
 import { Icons } from './components/Icons';
+import { playSound } from './utils/audio';
 
 const initialData = `Model Name	Serial
 SM-A022F_SEA_XXV	TLQ1186M
@@ -305,15 +306,18 @@ const App: React.FC = () => {
         });
 
         if (alreadyScanned) {
+            playSound('warning');
             addAlert('Duplikasi Serial', `Serial ${scannedSerial} sudah pernah di-scan.`, 'info');
             return currentItems;
         }
 
         if (itemFound) {
           scannedSerialsRef.current.add(scannedSerial);
+          playSound('success');
           addAlert('Scan Berhasil', `Serial ${scannedSerial} ditemukan dan ditandai.`, 'success');
           return updatedItems;
         } else {
+          playSound('error');
           addAlert('Serial Tidak Ditemukan', `Serial ${scannedSerial} tidak ada dalam daftar.`, 'error');
           return currentItems;
         }
@@ -365,9 +369,9 @@ const App: React.FC = () => {
     <div className="min-h-screen w-full p-4 md:p-8 flex flex-col items-center text-white font-sans">
       <AlertContainer alert={alert} setAlert={setAlert} />
 
-      <header className="w-full max-w-7xl mx-auto text-center mb-8 no-print">
-        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-shadow">
-          QR Data Processor & Scanner
+      <header className="w-full max-w-7xl mx-auto text-center mb-6 md:mb-8 no-print">
+        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-shadow px-2">
+          QR Data Processor
         </h1>
         <p className="mt-2 text-lg text-white/80">Paste data, generate QR codes, and start scanning.</p>
       </header>
@@ -385,25 +389,25 @@ const App: React.FC = () => {
                 </label>
                 <textarea
                   id="data-input"
-                  rows={8}
+                  rows={5}
                   value={dataInput}
                   onChange={(e) => setDataInput(e.target.value)}
-                  className="w-full p-4 border border-white/20 rounded-lg bg-black/20 focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 font-mono text-sm placeholder-white/50 transition-all duration-300"
+                  className="w-full p-4 border border-white/20 rounded-xl bg-black/20 focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 font-mono text-xs md:text-sm placeholder-white/50 transition-all duration-300 shadow-inner"
                   placeholder={'Model Name\tSerial\nSM-A022F\tTLQ1186M\nSM-A022G\tTLQ1187M'}
                 />
-                <div className="flex flex-col sm:grid sm:grid-cols-3 gap-4 mt-4">
-                  <label className="cursor-pointer bg-blue-500/80 hover:bg-blue-500/100 backdrop-blur-sm border border-white/20 text-white font-bold py-3 px-6 rounded-lg transition duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center gap-2">
+                <div className="flex flex-col sm:grid sm:grid-cols-3 gap-3 mt-4">
+                  <label className="cursor-pointer bg-blue-500/80 hover:bg-blue-500/100 backdrop-blur-sm border border-white/20 text-white font-bold py-3 md:py-4 px-4 rounded-xl transition duration-300 transform hover:scale-[1.02] active:scale-95 shadow-lg flex items-center justify-center gap-2">
                       <Icons.Upload />
-                      <span>Upload .txt</span>
+                      <span className="text-sm md:text-base">Upload .txt</span>
                       <input type="file" accept=".txt, text/plain" className="hidden" onChange={handleFileChange} />
                   </label>
-                  <button onClick={processData} className="bg-cyan-500/80 hover:bg-cyan-500/100 backdrop-blur-sm border border-white/20 text-white font-bold py-3 px-6 rounded-lg transition duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center gap-2">
+                  <button onClick={processData} className="bg-cyan-500/80 hover:bg-cyan-500/100 backdrop-blur-sm border border-white/20 text-white font-bold py-3 md:py-4 px-4 rounded-xl transition duration-300 transform hover:scale-[1.02] active:scale-95 shadow-lg flex items-center justify-center gap-2">
                     <Icons.Play />
-                    Execute & Generate
+                    <span className="text-sm md:text-base">Execute</span>
                   </button>
-                  <button onClick={clearData} className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-white font-bold py-3 px-6 rounded-lg transition duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center gap-2">
+                  <button onClick={clearData} className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-white font-bold py-3 md:py-4 px-4 rounded-xl transition duration-300 transform hover:scale-[1.02] active:scale-95 shadow-lg flex items-center justify-center gap-2">
                     <Icons.Trash />
-                    Clear Input
+                    <span className="text-sm md:text-base">Clear Input</span>
                   </button>
                 </div>
               </div>
@@ -412,22 +416,22 @@ const App: React.FC = () => {
 
         {items.length > 0 && (
           <GlassCard className="printable-area">
-            <div className="p-6">
-              <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4 no-print">
-                <div className='flex items-center gap-2'>
-                  <h2 className="text-2xl font-bold">Data Overview</h2>
-                  <span className="text-sm font-medium bg-green-500/80 px-3 py-1 rounded-full">{scannedCount} / {items.length} Scanned</span>
+            <div className="p-4 md:p-6">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4 no-print w-full">
+                <div className='flex items-center justify-between w-full md:w-auto gap-2'>
+                  <h2 className="text-xl md:text-2xl font-bold">Data Overview</h2>
+                  <span className="text-xs md:text-sm font-medium bg-green-500/80 px-2.5 py-1 rounded-full">{scannedCount} / {items.length} Scanned</span>
                 </div>
-                <div className="flex flex-wrap gap-3">
-                  <button onClick={() => setScannerModalOpen(true)} className="bg-red-500/80 hover:bg-red-500/100 backdrop-blur-sm border border-white/20 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 shadow-md flex items-center gap-2">
+                <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 md:gap-3 w-full md:w-auto">
+                  <button onClick={() => setScannerModalOpen(true)} className="w-full sm:w-auto bg-red-500/80 hover:bg-red-500/100 backdrop-blur-sm border border-white/20 text-white font-semibold py-2.5 px-3 rounded-xl transition duration-300 shadow-md flex items-center justify-center gap-2 text-sm md:text-base active:scale-95">
                     <Icons.Scan />
                     Scan QR
                   </button>
-                  <button onClick={() => setSlideshowModalOpen(true)} className="bg-purple-500/80 hover:bg-purple-500/100 backdrop-blur-sm border border-white/20 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 shadow-md flex items-center gap-2">
+                  <button onClick={() => setSlideshowModalOpen(true)} className="w-full sm:w-auto bg-purple-500/80 hover:bg-purple-500/100 backdrop-blur-sm border border-white/20 text-white font-semibold py-2.5 px-3 rounded-xl transition duration-300 shadow-md flex items-center justify-center gap-2 text-sm md:text-base active:scale-95">
                     <Icons.Slideshow />
-                    QR Slideshow
+                    Slideshow
                   </button>
-                   <button onClick={() => window.print()} className="bg-green-500/80 hover:bg-green-500/100 backdrop-blur-sm border border-white/20 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 shadow-md flex items-center gap-2">
+                   <button onClick={() => window.print()} className="col-span-2 sm:col-span-1 w-full sm:w-auto bg-green-500/80 hover:bg-green-500/100 backdrop-blur-sm border border-white/20 text-white font-semibold py-2.5 px-3 rounded-xl transition duration-300 shadow-md flex items-center justify-center gap-2 text-sm md:text-base active:scale-95">
                     <Icons.Print />
                     Print A4
                   </button>

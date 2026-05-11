@@ -57,18 +57,18 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose, onS
 
   return (
     <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-      <GlassCard className="w-full max-w-2xl" onClick={e => e.stopPropagation()}>
-        <div className="p-6">
+      <GlassCard className="w-full max-w-4xl" onClick={e => e.stopPropagation()}>
+        <div className="p-4 md:p-6">
           <div className="flex justify-between items-center border-b border-white/20 pb-3 mb-4">
-            <h2 className="text-2xl font-bold text-white">Scan QR Code</h2>
-            <button onClick={onClose} className="text-white/70 hover:text-white transition">
+            <h2 className="text-xl md:text-2xl font-bold text-white">Scan QR Code</h2>
+            <button onClick={onClose} className="text-white/70 hover:text-white transition p-2 bg-white/10 rounded-full">
               <Icons.Close />
             </button>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-black/50 rounded-lg overflow-hidden border border-white/20 aspect-square">
-                <div id={readerId} className="w-full h-full"></div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+            <div className="bg-black/50 rounded-lg overflow-hidden border border-white/20 aspect-square max-h-[50vh] sm:max-h-none flex justify-center items-center">
+                <div id={readerId} className="w-full h-full [&>video]:object-cover"></div>
             </div>
 
             <div className="bg-black/20 p-4 rounded-lg border border-white/10 flex flex-col justify-between">
